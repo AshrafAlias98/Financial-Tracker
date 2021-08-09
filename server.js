@@ -8,6 +8,7 @@ const resolvers = require("./graphql/resolvers"); // A map of functions which re
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: (ctx) => ctx,
 });
 
 server.listen().then(({ url }) => {

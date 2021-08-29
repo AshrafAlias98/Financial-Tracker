@@ -2,7 +2,7 @@ const router = require("express").Router();
 let User = require("../models/userModel");
 
 // User registration controller
-router.route("/add").post((req, res) => {
+router.route("/").post((req, res) => {
   let errors = {};
 
   const username = req.body.username;
@@ -21,21 +21,25 @@ router.route("/add").post((req, res) => {
       Object.keys(err.errors).forEach((key) => {
         errors[key] = err.errors[key].properties.message;
       });
+    }
 
+    if (password !== confirmedPassword) {
       // Check if password and confirmed password from user are the same
-      if (password !== confirmedPassword) {
-        errors.confirmedPassword = "Confirm password must match with password";
-      }
+      errors.confirmedPassword = "Confirm password must match with password";
+    }
 
-      res.status(400).send(errors); // Send collected input errors to front end
-    } else {
+    if (Object.keys(errors).length === 0) {
       newUser
         .save()
-        .then(() => res.json("User registered!"))
+        .then(() => res.status(200).send("User registered!"))
         .catch((err) => {
-          // TODO: Update to send to front end
-          console.log(err);
+          // Unique key duplication error
+          const errInput = Object.keys(err.keyPattern)[0];
+          errors[errInput] = `${errInput} is taken`;
+          res.status(400).send(errors);
         });
+    } else {
+      res.status(400).send(errors); // Send collected input errors to front end
     }
   });
 });

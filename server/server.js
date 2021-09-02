@@ -19,9 +19,9 @@ connection.once("open", () => {
 });
 
 const userRegistration = require("./routes/registrationRoute");
-// const userLogin = require("./routes/login");
+const userLogin = require("./routes/loginRoute");
 
-// app.use("/login", userLogin);
 app.use("/register", userRegistration);
+app.use("/login", userLogin);
 
 app.listen(port);
